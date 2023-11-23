@@ -2,7 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QVBoxLayout, QWidget
 
 from GameEngine.game_scene import GameScene
-from GameEngine.game_view import GameView
+from GameEngine.game_listener import GameListener
 from GameEngine.gameplay import Gameplay
 from Gui.q_controls import QControls
 from Serveur.client import Client
@@ -32,7 +32,7 @@ def main():
     client = Client()
     client.eventTriggered.connect(handle_event)
 
-    game_view = GameView(game_scene)
+    game_view = GameListener(game_scene)
     q_controls = QControls()
     q_controls.q_chat.event_triggered.connect(client.send_message)
 

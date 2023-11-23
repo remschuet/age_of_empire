@@ -10,16 +10,16 @@ from PySide6.QtCore import Qt, QRectF, QTimerEvent, QTimer, Slot, Signal, QObjec
 class ColoredSquare(QObject, QGraphicsRectItem):
     clicked = Signal(object)
 
-    def __init__(self, x, y, size, color, entity):
+    def __init__(self, x, y, size, color, entity_id):
         super().__init__()
         QGraphicsRectItem.__init__(self, x, y, size, size)
         self.setBrush(color)
         self.pos_x = x
         self.pos_y = y
-        self.entity = entity
+        self.entity_id = entity_id
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent):
-        if self.brush().color() == Qt.red:
-            self.clicked.emit(self.entity)
+        if self.brush().color() == Qt.blue:
+            self.clicked.emit(self.entity_id)
 
 
