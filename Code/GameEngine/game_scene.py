@@ -8,9 +8,10 @@ from Entity.human import Human
 
 
 class GameScene(QGraphicsScene):
-    def __init__(self, gameplay: Gameplay) -> None:
+    def __init__(self, gameplay: Gameplay, client_id: str) -> None:
         super().__init__()
         self.gameplay = gameplay
+        self.client_id = client_id
 
         # timer to reset vue
         self.timer: QTimer = QTimer()
@@ -30,20 +31,18 @@ class GameScene(QGraphicsScene):
         self.squares: [ColoredSquare] = []
 
         for i in self.gameplay.entity:
-            new_square = ColoredSquare(i.pos_x, i.pos_y, 50, Qt.red, i.id)
+            if i.player_name == self.client_id:
+                new_square = ColoredSquare(i.pos_x, i.pos_y, i.size, Qt.blue, i.id)
+            else:
+                new_square = ColoredSquare(i.pos_x, i.pos_y, i.size, Qt.red, i.id)
 
             self.squares.append(new_square)
-            self.addItem(new_square)  # Ajoute les nouveaux carrés à la scène
+            self.addItem(new_square)
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent):
         item = self.itemAt(event.scenePos(), self.views()[0].transform())
         # if instance entity
         if isinstance(item, ColoredSquare):
-            self.gameplay.current_entity_id = item.entity_id
+            self.gameplay.click_entity(item.entity_id)
         else:
-            scene_pos = event.scenePos()
-            self.gameplay.click_screen((scene_pos.x() - self.gameplay.decalage_x,
-                                       scene_pos.y() - self.gameplay.decalage_y))
-            if self.gameplay.current_entity_id:
-                entity_obj = next((rect for rect in self.gameplay.entity if rect.id == self.gameplay.current_entity_id), None)
-                entity_obj.direction = (scene_pos.x() - self.gameplay.decalage_x, scene_pos.y() - self.gameplay.decalage_y)
+            self.gameplay.click_screen(event)

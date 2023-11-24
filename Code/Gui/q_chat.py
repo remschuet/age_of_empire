@@ -32,7 +32,6 @@ class QChat(QWidget):
         self.setLayout(layout)
 
     def add_message(self, message:str):
-        print("messagerecu")
         self.chat_area.append(message)
         self.chat_area.moveCursor(QTextCursor.End)  # defiler vers le bas
 

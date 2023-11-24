@@ -1,3 +1,4 @@
+import random
 import sys
 from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
@@ -10,13 +11,16 @@ from Serveur.const import HOST_NAME, PORT_NUMBER
 class Client(QObject):
     eventTriggered = Signal(str)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.receive_thread = None
 
         # Initialisation du client socket
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect_to_server()
+
+    def get_client_id(self):
+        return f"id_{random.randint(1000, 9999)}"  # Utilisez le numéro de port comme identifiant
 
     def connect_to_server(self):
         host = HOST_NAME  # Adresse IP du serveur
