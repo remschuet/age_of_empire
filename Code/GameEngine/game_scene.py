@@ -5,6 +5,8 @@ from PySide6.QtWidgets import QGraphicsScene, QGraphicsSceneMouseEvent
 from GameEngine.gameplay import Gameplay
 from Gui.colored_square import ColoredSquare
 from Entity.human import Human
+from Gui.const_image_name import IMAGE_HUMAN_RED
+from Gui.image_human import ImageHuman
 
 
 class GameScene(QGraphicsScene):
@@ -18,7 +20,7 @@ class GameScene(QGraphicsScene):
         self.timer.timeout.connect(self.update_vue)
         self.timer.start(200)
 
-        self.squares: [ColoredSquare] = []
+        self.squares = []
         self.update_vue()
 
         # Définir la taille de la scène sur une valeur très grande
@@ -28,11 +30,11 @@ class GameScene(QGraphicsScene):
         for square in self.squares:
             self.removeItem(square)  # Supprime chaque carré de la scène
 
-        self.squares: [ColoredSquare] = []
+        self.squares = []
 
         for i in self.gameplay.entity:
             if i.player_name == self.client_id:
-                new_square = ColoredSquare(i.pos_x, i.pos_y, i.size, Qt.blue, i.id)
+                new_square = ImageHuman(i.pos_x, i.pos_y, i.size, IMAGE_HUMAN_RED, i.id)
             else:
                 new_square = ColoredSquare(i.pos_x, i.pos_y, i.size, Qt.red, i.id)
 
@@ -42,7 +44,7 @@ class GameScene(QGraphicsScene):
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent):
         item = self.itemAt(event.scenePos(), self.views()[0].transform())
         # if instance entity
-        if isinstance(item, ColoredSquare):
+        if isinstance(item, ColoredSquare) or isinstance(item, ImageHuman):
             self.gameplay.click_entity(item.entity_id)
         else:
             self.gameplay.click_screen(event)

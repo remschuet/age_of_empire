@@ -33,6 +33,10 @@ class Gameplay(QObject):
     def current_entity_id(self, entity: int) -> None:
         self.__current_entity_id = entity
 
+    def get_entity_by_id(self, id):
+        entity_obj: Human = next((rect for rect in self.entity if rect.id == id), None)
+        return entity_obj
+
     def boucle(self):
         # if entity are dead
         for ent in self.entity:
@@ -47,8 +51,6 @@ class Gameplay(QObject):
         else:
             if self.__current_entity_id:
                 self.emit_action_human_attack(self.__current_entity_id, id)
-                my_human: Human = next((rect for rect in self.entity if rect.id == self.__current_entity_id), None)
-                my_human.target = entity_obj
             else:
                 print("Erreur attack, no current_entity_id")
 
@@ -60,11 +62,12 @@ class Gameplay(QObject):
 
         if self.current_entity_id and self.current_entity_id >= 1:
             entity_obj: Entity = next((rect for rect in self.entity if rect.id == self.current_entity_id), None)
+            self.emit_action_entity_move(entity_obj, scene_pos)
 
-            self.action.emit(f"{self.client_id};bouger;{entity_obj.id};"
-                             f"{scene_pos.x() - self.decalage_x};"
-                             f"{scene_pos.y() - self.decalage_y}")
-            # self.current_entity_id = None
+    def emit_action_entity_move(self, entity_obj, scene_pos):
+        self.action.emit(f"{self.client_id};bouger;{entity_obj.id};"
+                         f"{scene_pos.x() - self.decalage_x};"
+                         f"{scene_pos.y() - self.decalage_y}")
 
     def emit_action_human_attack(self, my_human_id: int, en_entity_id: int):
         self.action.emit(f"{self.client_id};attack;"
@@ -73,6 +76,7 @@ class Gameplay(QObject):
 
     def emit_action_create_human(self, event):
         scene_pos = event.scenePos()
+        self.__current_entity_id = 0
         self.action.emit(f"{self.client_id};entity;"
                          f"{int(scene_pos.x() - self.decalage_x)};"
                          f"{int(scene_pos.y() - self.decalage_y)}")
@@ -88,11 +92,9 @@ class Gameplay(QObject):
 
     @Slot()
     def received_human_attack(self, attack_human_id: int, victim_entity_id: int):
-        print("attack")
         attack_human: Human = next((rect for rect in self.entity if rect.id == attack_human_id), None)
-        victim_entity: Entity = next((rect for rect in self.entity if rect.id == victim_entity_id), None)
-        attack_human.target = victim_entity
+        attack_human.target = victim_entity_id
 
     @Slot()
     def received_create_entity(self, player_name: str, x: int, y: int) -> None:
-        self.entity.append(Human(player_name, x + self.decalage_x, y + self.decalage_y))
+        self.entity.append(Human(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
