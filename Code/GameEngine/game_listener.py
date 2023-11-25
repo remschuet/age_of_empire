@@ -16,21 +16,15 @@ class GameListener(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
     def keyPressEvent(self, event) -> None:
-        if event.key() == Qt.Key_Left:
+        if event.key() == Qt.Key_Left and self.scene().sceneRect().left() > -1000:
             self.scene().setSceneRect(self.sceneRect().translated(10, 0))
-            self.setSceneRect(QRectF(self.sceneRect().translated(10, 0)))
-            super().keyPressEvent(event)
-        elif event.key() == Qt.Key_Right:
+        elif event.key() == Qt.Key_Right and self.scene().sceneRect().right() < 1000:
             self.scene().setSceneRect(self.sceneRect().translated(-10, 0))
-            self.setSceneRect(QRectF(self.sceneRect().translated(-10, 0)))
-            super().keyPressEvent(event)
-        elif event.key() == Qt.Key_Up:
+        elif event.key() == Qt.Key_Up and self.scene().sceneRect().top() > -1000:
             self.scene().setSceneRect(self.sceneRect().translated(0, 10))
-            self.setSceneRect(QRectF(self.sceneRect().translated(0, 10)))
-            super().keyPressEvent(event)
-        elif event.key() == Qt.Key_Down:
+        elif event.key() == Qt.Key_Down and self.scene().sceneRect().bottom() < 1000:
             self.scene().setSceneRect(self.sceneRect().translated(0, -10))
-            self.setSceneRect(QRectF(self.sceneRect().translated(0, -10)))
-            super().keyPressEvent(event)
+
+        super().keyPressEvent(event)
 
         self.scene().update_vue()

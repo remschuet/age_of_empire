@@ -1,5 +1,5 @@
 from PySide6.QtCore import QTimer, QRectF, QPointF, Slot
-from PySide6.QtGui import Qt
+from PySide6.QtGui import Qt, QColor
 from PySide6.QtWidgets import QGraphicsScene, QGraphicsSceneMouseEvent
 
 from Entity.town_center import TownCenter
@@ -8,6 +8,7 @@ from Gui.colored_square import ColoredSquare
 from Entity.human import Human
 from Gui.const_image_name import *
 from Gui.image_human import ImageHuman
+from Gui.q_image_background import QImageBackground
 
 
 class GameScene(QGraphicsScene):
@@ -25,7 +26,11 @@ class GameScene(QGraphicsScene):
         self.update_vue()
 
         # Définir la taille de la scène sur une valeur très grande
-        self.setSceneRect(QRectF(-10000, -10000, 20000, 20000))
+        self.setSceneRect(QRectF(-1000, -1000, 2000, 2000))
+        self.setBackgroundBrush(QColor("green"))
+
+        image_background = QImageBackground(-1000, -1000, 2000, 2000, IMAGE_BACKGROUND, None)
+        self.addItem(image_background)
 
     def update_vue(self) -> None:
         for square in self.squares:

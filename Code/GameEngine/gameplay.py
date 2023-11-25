@@ -6,9 +6,6 @@ from Entity.tower import Tower
 from Entity.town_center import TownCenter
 from GameEngine.const_action import *
 
-###
-### - Signal end game
-### - creer town dans gameplay
 ### - longueur additionel attack contre les murs
 ### - liste 2d des positions prisent (tour, murs etc)
 

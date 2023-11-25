@@ -19,6 +19,8 @@ class Human(Entity):
         self.__direction: tuple = (x - 120, y - 40)
         self.__speed: int = 10
         self.__target: int = 0
+        self.size_x = 40
+        self.size_y = 40
 
     def human_action(self) -> None:
         self.tick += 1

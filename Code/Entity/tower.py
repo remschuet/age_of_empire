@@ -15,8 +15,8 @@ class Tower(Entity):
         self.timer.timeout.connect(self.tower_action)
         self.timer.start(250)
 
-        self.size_x = 20
-        self.size_y = 40
+        self.size_x = 40
+        self.size_y = 80
 
         self.__distance_shooting = 50
 

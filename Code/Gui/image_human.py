@@ -17,7 +17,7 @@ class ImageHuman(QObject, QGraphicsPixmapItem):
 
         script_directory = os.path.dirname(os.path.realpath(__file__))
         image_full_path = os.path.join(script_directory, image_path)
-        pixmap = QPixmap(image_full_path).scaled(size_x * 2, size_y * 2)
+        pixmap = QPixmap(image_full_path).scaled(size_x, size_y)
 
         self.setPixmap(pixmap)
         self.setPos(x, y)
