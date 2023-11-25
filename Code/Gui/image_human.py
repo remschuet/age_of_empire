@@ -9,13 +9,15 @@ import os
 class ImageHuman(QObject, QGraphicsPixmapItem):
     clicked = Signal(object)
 
-    def __init__(self, x, y, size, image_path, entity_id):
+    def __init__(self, x, y, size_x, size_y, image_path, entity_id):
         super().__init__()
         QGraphicsPixmapItem.__init__(self)
 
+        image_path = f"image/{image_path}"
+
         script_directory = os.path.dirname(os.path.realpath(__file__))
         image_full_path = os.path.join(script_directory, image_path)
-        pixmap = QPixmap(image_full_path).scaled(size * 2, size * 2)
+        pixmap = QPixmap(image_full_path).scaled(size_x * 2, size_y * 2)
 
         self.setPixmap(pixmap)
         self.setPos(x, y)

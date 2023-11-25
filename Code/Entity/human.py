@@ -53,12 +53,12 @@ class Human(Entity):
     def attack(self):
         target_entity = self.get_entity_by_id(self.target)
         if target_entity:
-            if (is_collided(self.pos_x, self.pos_y, self.size, self.size,
-                            target_entity.pos_x, target_entity.pos_y, target_entity.size, target_entity.size)):
+            if (is_collided(self.pos_x, self.pos_y, self.size_x, self.size_y,
+                            target_entity.pos_x, target_entity.pos_y, target_entity.size_x, target_entity.size_y)):
                 print(f"-----Collision Detected:-----")
                 target_entity.hp -= 1
             else:
-                self.direction = (target_entity.pos_x + (target_entity.size / 2), target_entity.pos_y + (target_entity.size / 2))
+                self.direction = (target_entity.pos_x + (target_entity.size_x / 2), target_entity.pos_y + (target_entity.size_y / 2))
         else:
             self.target = 0
 

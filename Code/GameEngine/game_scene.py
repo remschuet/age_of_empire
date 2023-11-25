@@ -2,10 +2,11 @@ from PySide6.QtCore import QTimer, QRectF, QPointF, Slot
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QGraphicsScene, QGraphicsSceneMouseEvent
 
+from Entity.town_center import TownCenter
 from GameEngine.gameplay import Gameplay
 from Gui.colored_square import ColoredSquare
 from Entity.human import Human
-from Gui.const_image_name import IMAGE_HUMAN_RED
+from Gui.const_image_name import *
 from Gui.image_human import ImageHuman
 
 
@@ -34,9 +35,19 @@ class GameScene(QGraphicsScene):
 
         for i in self.gameplay.entity:
             if i.player_name == self.client_id:
-                new_square = ImageHuman(i.pos_x, i.pos_y, i.size, IMAGE_HUMAN_RED, i.id)
+                if isinstance(i, Human):
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_HUMAN_BLUE, i.id)
+                elif isinstance(i, TownCenter):
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_BLUE, i.id)
+                else:
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWER_BLUE, i.id)
             else:
-                new_square = ColoredSquare(i.pos_x, i.pos_y, i.size, Qt.red, i.id)
+                if isinstance(i, Human):
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_HUMAN_RED, i.id)
+                elif isinstance(i, TownCenter):
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_RED, i.id)
+                else:
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWER_RED, i.id)
 
             self.squares.append(new_square)
             self.addItem(new_square)

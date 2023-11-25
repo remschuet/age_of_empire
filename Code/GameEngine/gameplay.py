@@ -2,7 +2,15 @@ from PySide6.QtCore import Signal, QObject, Slot, QTimer
 
 from Entity.entity import Entity
 from Entity.human import Human
+from Entity.tower import Tower
+from Entity.town_center import TownCenter
 from GameEngine.const_action import *
+
+###
+### - Signal end game
+### - creer town dans gameplay
+### - longueur additionel attack contre les murs
+### - liste 2d des positions prisent (tour, murs etc)
 
 
 class Gameplay(QObject):
@@ -41,6 +49,8 @@ class Gameplay(QObject):
         # if entity are dead
         for ent in self.entity:
             if ent.hp < 0 or not ent.alive:
+                if isinstance(ent, TownCenter) and ent.player_name == self.client_id:
+                    self.emit_end_game()
                 self.entity.remove(ent)
                 del ent
 
@@ -57,12 +67,19 @@ class Gameplay(QObject):
     def click_screen(self, event):
         scene_pos = event.scenePos()
         if self.__current_action != ACTION_NULL:
-            self.emit_action_create_human(event)
+            self.emit_action_btn_clicked(event)
             self.__current_action = ACTION_NULL
 
         if self.current_entity_id and self.current_entity_id >= 1:
             entity_obj: Entity = next((rect for rect in self.entity if rect.id == self.current_entity_id), None)
             self.emit_action_entity_move(entity_obj, scene_pos)
+
+    def emit_create_town_center(self, is_starter: bool) -> None:
+        if is_starter:
+            self.action.emit(f"{self.client_id};town_center;"
+                             f"{-100};{-80}")
+        else:
+            self.action.emit(f"{self.client_id};town_center;{100};{80}")
 
     def emit_action_entity_move(self, entity_obj, scene_pos):
         self.action.emit(f"{self.client_id};bouger;{entity_obj.id};"
@@ -74,12 +91,20 @@ class Gameplay(QObject):
                          f"{int(my_human_id)};"
                          f"{int(en_entity_id)}")
 
-    def emit_action_create_human(self, event):
+    def emit_action_btn_clicked(self, event):
         scene_pos = event.scenePos()
         self.__current_entity_id = 0
-        self.action.emit(f"{self.client_id};entity;"
-                         f"{int(scene_pos.x() - self.decalage_x)};"
-                         f"{int(scene_pos.y() - self.decalage_y)}")
+        if self.__current_action == ACTION_PLACE_HUMAN:
+            self.action.emit(f"{self.client_id};entity;"
+                             f"{int(scene_pos.x() - self.decalage_x)};"
+                             f"{int(scene_pos.y() - self.decalage_y)}")
+        elif self.__current_action == ACTION_PLACE_TOWER:
+            self.action.emit(f"{self.client_id};tower;"
+                             f"{int(scene_pos.x() - self.decalage_x)};"
+                             f"{int(scene_pos.y() - self.decalage_y)}")
+
+    def emit_end_game(self):
+        self.action.emit(f"{self.client_id};end_game")
 
     @Slot()
     def received_action(self, action: int):
@@ -98,3 +123,15 @@ class Gameplay(QObject):
     @Slot()
     def received_create_entity(self, player_name: str, x: int, y: int) -> None:
         self.entity.append(Human(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
+
+    @Slot()
+    def received_create_town_center(self, player_name: str, x: int, y: int) -> None:
+        self.entity.append(TownCenter(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
+
+    @Slot()
+    def received_create_tower(self, player_name: str, x: int, y: int) -> None:
+        self.entity.append(Tower(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
+
+    @Slot()
+    def received_end_game(self, loser_client_id: str):
+        pass

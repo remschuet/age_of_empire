@@ -10,9 +10,9 @@ from PySide6.QtCore import Qt, QRectF, QTimerEvent, QTimer, Slot, Signal, QObjec
 class ColoredSquare(QObject, QGraphicsRectItem):
     clicked = Signal(object)
 
-    def __init__(self, x, y, size, color, entity_id):
+    def __init__(self, x, y, size_x, size_y, color, entity_id):
         super().__init__()
-        QGraphicsRectItem.__init__(self, x, y, size, size)
+        QGraphicsRectItem.__init__(self, x, y, size_x, size_y)
         self.setBrush(color)
         self.pos_x = x
         self.pos_y = y

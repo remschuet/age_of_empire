@@ -14,6 +14,7 @@ class Entity:
 
         self.alive = True
         self.hp = 1
-        self.size = 20
+        self.size_x = 20
+        self.size_y = 20
         self.tick = 0
 
