@@ -5,6 +5,10 @@ from Entity.human import Human
 from Entity.tower import Tower
 from Entity.town_center import TownCenter
 from GameEngine.const_action import *
+import numpy as np
+
+from GameEngine.game_numpy import GameNumpy
+
 
 ### - longueur additionel attack contre les murs
 ### - liste 2d des positions prisent (tour, murs etc)
@@ -17,11 +21,15 @@ class Gameplay(QObject):
         super().__init__()
         self.client_id = client_id
 
+        self.__size_map = 2000
+        self.__size_case = 20
+        game_numpy = GameNumpy(self.__size_map, self.__size_case)
+
         self.entity: list = []
         self.decalage_x: int = 0
         self.decalage_y: int = 0
-        self.received_create_entity(self.client_id, 0, 0)
-        self.received_create_entity(self.client_id, 100, 0)
+        # self.received_create_entity(self.client_id, 0, 0)
+        # self.received_create_entity(self.client_id, 100, 0)
         self.__current_entity_id: int = None
         self.__current_action = ACTION_NULL
 
