@@ -4,14 +4,10 @@ from Entity.entity import Entity
 from Entity.human import Human
 from Entity.tower import Tower
 from Entity.town_center import TownCenter
+from Entity.wall import Wall
 from GameEngine.const_action import *
-import numpy as np
-
 from GameEngine.game_numpy import GameNumpy
-
-
-### - longueur additionel attack contre les murs
-### - liste 2d des positions prisent (tour, murs etc)
+import numpy as np
 
 
 class Gameplay(QObject):
@@ -23,13 +19,12 @@ class Gameplay(QObject):
 
         self.__size_map = 2000
         self.__size_case = 20
-        game_numpy = GameNumpy(self.__size_map, self.__size_case)
+        self.__game_numpy = GameNumpy(self.__size_map, self.__size_case)
 
         self.entity: list = []
         self.decalage_x: int = 0
         self.decalage_y: int = 0
-        # self.received_create_entity(self.client_id, 0, 0)
-        # self.received_create_entity(self.client_id, 100, 0)
+
         self.__current_entity_id: int = None
         self.__current_action = ACTION_NULL
 
@@ -46,10 +41,33 @@ class Gameplay(QObject):
     def current_entity_id(self, entity: int) -> None:
         self.__current_entity_id = entity
 
+    # use by entity to get access to other entity
     def get_entity_by_id(self, id):
         entity_obj: Human = next((rect for rect in self.entity if rect.id == id), None)
         return entity_obj
 
+    def click_entity(self, id):
+        entity_obj: Human = next((rect for rect in self.entity if rect.id == id), None)
+        if entity_obj.player_name == self.client_id:
+            self.__current_entity_id = id
+        else:
+            if self.__current_entity_id:
+                self.emit_action_entity_attack(self.__current_entity_id, id)
+            else:
+                print("Erreur attack, no current_entity_id")
+
+    # select or attack
+    def click_screen(self, event):
+        scene_pos = event.scenePos()
+        if self.__current_action != ACTION_NULL:
+            self.emit_action_create_entity(event)
+            self.__current_action = ACTION_NULL
+
+        if self.current_entity_id and self.current_entity_id >= 1:
+            entity_obj: Entity = next((rect for rect in self.entity if rect.id == self.current_entity_id), None)
+            self.emit_action_entity_move(entity_obj, scene_pos)
+
+    @Slot()
     def boucle(self):
         # if entity are dead
         for ent in self.entity:
@@ -59,57 +77,62 @@ class Gameplay(QObject):
                 self.entity.remove(ent)
                 del ent
 
-    def click_entity(self, id):
-        entity_obj: Human = next((rect for rect in self.entity if rect.id == id), None)
-        if entity_obj.player_name == self.client_id:
-            self.__current_entity_id = id
-        else:
-            if self.__current_entity_id:
-                self.emit_action_human_attack(self.__current_entity_id, id)
-            else:
-                print("Erreur attack, no current_entity_id")
+    ###################################
+    #######     SERVER PART     #######
+    ###################################
 
-    def click_screen(self, event):
-        scene_pos = event.scenePos()
-        if self.__current_action != ACTION_NULL:
-            self.emit_action_btn_clicked(event)
-            self.__current_action = ACTION_NULL
+    def received_from_server(self, message: str) -> None:
+        # currently in game
+        data = message.split(";")
+        action = int(data[1])
+        if action:
+            if action == ACTION_PLACE_HUMAN:
+                self.received_create_entity(data[0], int(data[2]), int(data[3]))
+            elif action == ACTION_PLACE_TOWER:
+                self.received_create_tower(data[0], int(data[2]), int(data[3]))
+            elif action == ACTION_MOVE_ENTITY:
+                self.received_direction_entity(int(data[2]), float(data[3]), float(data[4]))
+            elif action == ACTION_ATTACK:
+                self.received_human_attack(int(data[2]), int(data[3]))
+            elif action == ACTION_PLACE_TOWN_CENTER:
+                self.received_create_town_center(data[0], int(data[2]), int(data[3]))
+            elif action == ACTION_PLACE_WALL:
+                self.received_create_wall(data[0], int(data[2]), int(data[3]))
 
-        if self.current_entity_id and self.current_entity_id >= 1:
-            entity_obj: Entity = next((rect for rect in self.entity if rect.id == self.current_entity_id), None)
-            self.emit_action_entity_move(entity_obj, scene_pos)
+    ###################################
+    #######   CALL BY PLAYER    #######
+    ###################################
 
     def emit_create_town_center(self, is_starter: bool) -> None:
         if is_starter:
-            self.action.emit(f"{self.client_id};town_center;"
+            self.action.emit(f"{self.client_id};{ACTION_PLACE_TOWN_CENTER};"
                              f"{-100};{-80}")
         else:
-            self.action.emit(f"{self.client_id};town_center;{100};{80}")
+            self.action.emit(f"{self.client_id};{ACTION_PLACE_TOWN_CENTER};{100};{80}")
 
     def emit_action_entity_move(self, entity_obj, scene_pos):
-        self.action.emit(f"{self.client_id};bouger;{entity_obj.id};"
+        self.action.emit(f"{self.client_id};{ACTION_MOVE_ENTITY};{entity_obj.id};"
                          f"{scene_pos.x() - self.decalage_x};"
                          f"{scene_pos.y() - self.decalage_y}")
 
-    def emit_action_human_attack(self, my_human_id: int, en_entity_id: int):
-        self.action.emit(f"{self.client_id};attack;"
+    def emit_action_entity_attack(self, my_human_id: int, en_entity_id: int):
+        self.action.emit(f"{self.client_id};{ACTION_ATTACK};"
                          f"{int(my_human_id)};"
                          f"{int(en_entity_id)}")
 
-    def emit_action_btn_clicked(self, event):
+    def emit_action_create_entity(self, event):
         scene_pos = event.scenePos()
         self.__current_entity_id = 0
-        if self.__current_action == ACTION_PLACE_HUMAN:
-            self.action.emit(f"{self.client_id};entity;"
-                             f"{int(scene_pos.x() - self.decalage_x)};"
-                             f"{int(scene_pos.y() - self.decalage_y)}")
-        elif self.__current_action == ACTION_PLACE_TOWER:
-            self.action.emit(f"{self.client_id};tower;"
-                             f"{int(scene_pos.x() - self.decalage_x)};"
-                             f"{int(scene_pos.y() - self.decalage_y)}")
+        self.action.emit(f"{self.client_id};{self.__current_action};"
+                         f"{int(scene_pos.x() - self.decalage_x)};"
+                         f"{int(scene_pos.y() - self.decalage_y)}")
 
     def emit_end_game(self):
-        self.action.emit(f"{self.client_id};end_game")
+        self.action.emit(f"{self.client_id};{ACTION_END_GAME}")
+
+    ###################################
+    ######    CALL BY SERVER    #######
+    ###################################
 
     @Slot()
     def received_action(self, action: int):
@@ -136,6 +159,15 @@ class Gameplay(QObject):
     @Slot()
     def received_create_tower(self, player_name: str, x: int, y: int) -> None:
         self.entity.append(Tower(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
+
+    @Slot()
+    def received_create_wall(self, player_name: str, x: int, y: int) -> None:
+        pos_x = int((x + self.decalage_x) / self.__size_case)
+        pos_y = int((y + self.decalage_y) / self.__size_case)
+        print(self.__size_map / self.__size_case)
+        print(int((x + self.decalage_x + 1000) / 20), " - ",int((y + self.decalage_y + 1000) / 20))
+
+        self.entity.append(Wall(player_name, pos_x * 20, pos_y * 20, self.get_entity_by_id))
 
     @Slot()
     def received_end_game(self, loser_client_id: str):

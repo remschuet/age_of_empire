@@ -7,6 +7,7 @@ from GameEngine.gameplay import Gameplay
 from Gui.q_controls import QControls
 from Gui.q_lobby import LobbyApp
 from Serveur.client import Client
+from GameEngine.const_action import *
 
 
 class Main:
@@ -29,26 +30,15 @@ class Main:
         data = message.split(";")
         if self.gameplay:
             if data[1]:
-                if data[1] == "entity":
-                    self.gameplay.received_create_entity(data[0], int(data[2]), int(data[3]))
-                elif data[1] == "tower":
-                    self.gameplay.received_create_tower(data[0], int(data[2]), int(data[3]))
-                elif data[1] == "bouger":
-                    self.gameplay.received_direction_entity(int(data[2]), float(data[3]), float(data[4]))
-                elif data[1] == "attack":
-                    self.gameplay.received_human_attack(int(data[2]), int(data[3]))
-                elif data[1] == "town_center":
-                    self.gameplay.received_create_town_center(data[0], int(data[2]), int(data[3]))
-                elif data[1] == "end_game":
+                if int(data[1]) == ACTION_END_GAME:
                     self.gameplay.received_end_game(data[0])
                     self.window.close()
                     self.window = LobbyApp()
                     self.window.show()
-            else:
-                print(f"Received message from client: {message}")
-        # not in game
+                else:
+                    self.gameplay.received_from_server(message)
         else:
-            if data[1] == "start":
+            if data[1] == f"{ACTION_START_GAME}":
                 self.start_game(self.client_id == data[0])
             else:
                 print("NO EVENT START")
@@ -81,7 +71,7 @@ class Main:
         self.window.show()
 
     def btn_start_clicked(self):
-        self.client.send_message(f"{self.client_id};start")
+        self.client.send_message(f"{self.client_id};{ACTION_START_GAME}")
 
 
 def main():

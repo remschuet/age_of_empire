@@ -7,7 +7,7 @@ import heapq
 import numpy as np
 
 
-def astar(grid, start_pos: tuple, goal_pos: tuple): # return [(x,y), (x,y), (x,y)]
+def AStar(grid, start_pos: tuple, goal_pos: tuple): # return [(x,y), (x,y), (x,y)]
     rows, cols = grid.shape
     open_set = []
     closed_set = set()
