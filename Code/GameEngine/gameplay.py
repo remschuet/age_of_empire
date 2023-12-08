@@ -91,7 +91,7 @@ class Gameplay(QObject):
             elif action == ACTION_PLACE_TOWER:
                 self.received_create_tower(data[0], int(data[2]), int(data[3]))
             elif action == ACTION_MOVE_ENTITY:
-                self.received_direction_entity(int(data[2]), float(data[3]), float(data[4]))
+                self.received_direction_entity(int(data[2]), int(float(data[3])), int(float(data[4])))
             elif action == ACTION_ATTACK:
                 self.received_human_attack(int(data[2]), int(data[3]))
             elif action == ACTION_PLACE_TOWN_CENTER:
@@ -106,9 +106,9 @@ class Gameplay(QObject):
     def emit_create_town_center(self, is_starter: bool) -> None:
         if is_starter:
             self.action.emit(f"{self.client_id};{ACTION_PLACE_TOWN_CENTER};"
-                             f"{-100};{-80}")
+                             f"{900};{920}")
         else:
-            self.action.emit(f"{self.client_id};{ACTION_PLACE_TOWN_CENTER};{100};{80}")
+            self.action.emit(f"{self.client_id};{ACTION_PLACE_TOWN_CENTER};{1100};{1200}")
 
     def emit_action_entity_move(self, entity_obj, scene_pos):
         self.action.emit(f"{self.client_id};{ACTION_MOVE_ENTITY};{entity_obj.id};"
@@ -139,9 +139,11 @@ class Gameplay(QObject):
         self.__current_action = action
 
     @Slot()
-    def received_direction_entity(self, id: int, pos_x: float, pos_y: float):
+    def received_direction_entity(self, id: int, pos_x: int, pos_y: int):
         entity_obj: Human = next((rect for rect in self.entity if rect.id == id), None)
         entity_obj.direction = (pos_x, pos_y)
+        np_path = self.__game_numpy.get_path_relative(entity_obj.get_pos_xy(), (pos_x, pos_y))
+        entity_obj.direction_list = np_path
 
     @Slot()
     def received_human_attack(self, attack_human_id: int, victim_entity_id: int):
@@ -162,12 +164,14 @@ class Gameplay(QObject):
 
     @Slot()
     def received_create_wall(self, player_name: str, x: int, y: int) -> None:
+        # create wall
         pos_x = int((x + self.decalage_x) / self.__size_case)
         pos_y = int((y + self.decalage_y) / self.__size_case)
-        print(self.__size_map / self.__size_case)
-        print(int((x + self.decalage_x + 1000) / 20), " - ",int((y + self.decalage_y + 1000) / 20))
-
         self.entity.append(Wall(player_name, pos_x * 20, pos_y * 20, self.get_entity_by_id))
+        # add to numpy array
+        pos_x_in_array = int((x + self.decalage_x) / self.__size_case)
+        pos_y_in_array = int((y + self.decalage_y) / self.__size_case)
+        self.__game_numpy.set_point_rect((pos_x_in_array, pos_y_in_array), int(80 / 20), int(20 / 20), 1)
 
     @Slot()
     def received_end_game(self, loser_client_id: str):

@@ -16,13 +16,13 @@ class GameListener(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
     def keyPressEvent(self, event) -> None:
-        if event.key() == Qt.Key_Left and self.scene().sceneRect().left() > -1000:
+        if event.key() == Qt.Key_Left and self.scene().sceneRect().left() > 0:
             self.scene().setSceneRect(self.sceneRect().translated(10, 0))
-        elif event.key() == Qt.Key_Right and self.scene().sceneRect().right() < 1000:
+        elif event.key() == Qt.Key_Right and self.scene().sceneRect().right() < 2000:
             self.scene().setSceneRect(self.sceneRect().translated(-10, 0))
-        elif event.key() == Qt.Key_Up and self.scene().sceneRect().top() > -1000:
+        elif event.key() == Qt.Key_Up and self.scene().sceneRect().top() > 0:
             self.scene().setSceneRect(self.sceneRect().translated(0, 10))
-        elif event.key() == Qt.Key_Down and self.scene().sceneRect().bottom() < 1000:
+        elif event.key() == Qt.Key_Down and self.scene().sceneRect().bottom() < 2000:
             self.scene().setSceneRect(self.sceneRect().translated(0, -10))
 
         super().keyPressEvent(event)

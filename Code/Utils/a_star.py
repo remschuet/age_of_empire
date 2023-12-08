@@ -5,9 +5,16 @@
 import heapq
 
 import numpy as np
+"""
+    start_pos (y, x)
+"""
 
 
 def AStar(grid, start_pos: tuple, goal_pos: tuple): # return [(x,y), (x,y), (x,y)]
+
+    start_pos = tuple(reversed(start_pos))
+    goal_pos = tuple(reversed(goal_pos))
+
     rows, cols = grid.shape
     open_set = []
     closed_set = set()

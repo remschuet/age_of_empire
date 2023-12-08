@@ -18,3 +18,6 @@ class Entity:
         self.size_y = 20
         self.tick = 0
 
+    def get_pos_xy(self) -> tuple:
+        return self.pos_x, self.pos_y
+

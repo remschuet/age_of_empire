@@ -26,10 +26,10 @@ class GameScene(QGraphicsScene):
         self.update_vue()
 
         # Définir la taille de la scène sur une valeur très grande
-        self.setSceneRect(QRectF(-1000, -1000, 2000, 2000))
+        self.setSceneRect(QRectF(0, 0, 2000, 2000))
         self.setBackgroundBrush(QColor("green"))
 
-        image_background = QImageBackground(-1000, -1000, 2000, 2000, IMAGE_BACKGROUND, None)
+        image_background = QImageBackground(0, 0, 2000, 2000, IMAGE_BACKGROUND, None)
         self.addItem(image_background)
 
     def update_vue(self) -> None:

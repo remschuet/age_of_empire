@@ -16,7 +16,9 @@ class Human(Entity):
         self.timer.timeout.connect(self.human_action)
         self.timer.start(250)
 
-        self.__direction: tuple = (x - 120, y - 40)
+        self.__direction: tuple = None
+        self.__direction_list: list[tuple] = []
+
         self.__speed: int = 10
         self.__target: int = 0
         self.size_x = 40
@@ -31,6 +33,8 @@ class Human(Entity):
 
     def bouger(self) -> None:
         if self.__direction is not None:
+            print(self.__direction_list)
+
             # Calculer les composantes x et y du vecteur de déplacement
             dx = self.__direction[0] - self.pos_x
             dy = self.__direction[1] - self.pos_y
@@ -71,6 +75,15 @@ class Human(Entity):
     @direction.setter
     def direction(self, value: tuple) -> None:
         self.__direction = value
+
+    @property
+    def direction_list(self) -> list:
+        return self.__direction_list
+
+    @direction_list.setter
+    def direction_list(self, value: list) -> None:
+        print(value)
+        self.__direction_list = value
 
     @property
     def target(self) -> int:
