@@ -100,5 +100,5 @@ if __name__ == "__main__":
     goal = (4, 4)
     path = []
     for i in range(1000):
-        path = astar(grille, start, goal)
+        path = AStar(grille, start, goal)
     print("Chemin trouvé:", path)

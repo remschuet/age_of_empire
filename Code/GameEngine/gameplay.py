@@ -141,7 +141,7 @@ class Gameplay(QObject):
     @Slot()
     def received_direction_entity(self, id: int, pos_x: int, pos_y: int):
         entity_obj: Human = next((rect for rect in self.entity if rect.id == id), None)
-        entity_obj.direction = (pos_x, pos_y)
+        # entity_obj.direction = (pos_x, pos_y)
         np_path = self.__game_numpy.get_path_relative(entity_obj.get_pos_xy(), (pos_x, pos_y))
         entity_obj.direction_list = np_path
 

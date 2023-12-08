@@ -1,6 +1,8 @@
 import numpy as np
-from Utils.a_star import AStar
 from typing import Optional
+
+from Utils.a_star_8d import AStar
+
 
 class GameNumpy:
     """ 2D game world using NumPy arrays to represent location of objets
@@ -105,7 +107,6 @@ class GameNumpy:
 
         :param start_point: format (x, y)
         :param end_point:   format (x, y)
-
         :return: path using this format : [[x, y], [x, y]].
         :rtype: np.ndarray or None
 

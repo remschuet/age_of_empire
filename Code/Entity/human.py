@@ -31,14 +31,22 @@ class Human(Entity):
         if not self.tick % 2:
             self.attack()
 
-    def bouger(self) -> None:
-        if self.__direction is not None:
-            print(self.__direction_list)
+    def __get_next_direction(self):
+        if self.__direction_list and self.__direction_list[0] is not None:
+            self.__direction = self.__direction_list[0]
+            self.__direction_list.pop(0)
 
+    def bouger(self) -> None:
+        if self.__direction is None:
+            self.__get_next_direction()
+        else:
+            if self.__direction[0] == self.pos_x and self.__direction[1] == self.pos_y:
+                self.__get_next_direction()
             # Calculer les composantes x et y du vecteur de déplacement
             dx = self.__direction[0] - self.pos_x
             dy = self.__direction[1] - self.pos_y
 
+            # print("direction : ", self.__direction[0], " - ", self.__direction[1], " pos : " self.pos_x and self.__direction[1] == self.pos_y)
             # Calculer la distance entre la position actuelle et la destination
             distance = math.sqrt(dx ** 2 + dy ** 2)
 
