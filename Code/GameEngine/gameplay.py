@@ -144,6 +144,7 @@ class Gameplay(QObject):
         # entity_obj.direction = (pos_x, pos_y)
         np_path = self.__game_numpy.get_path_relative(entity_obj.get_pos_xy(), (pos_x, pos_y))
         entity_obj.direction_list = np_path
+        # entity_obj.direction = (pos_x, pos_y)
 
     @Slot()
     def received_human_attack(self, attack_human_id: int, victim_entity_id: int):
@@ -160,7 +161,10 @@ class Gameplay(QObject):
 
     @Slot()
     def received_create_tower(self, player_name: str, x: int, y: int) -> None:
-        self.entity.append(Tower(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
+        self.entity.append(Tower(player_name,
+                                 x + self.decalage_x - Tower.SIZE_X / 2,
+                                 y + self.decalage_y - Tower.SIZE_Y / 2,
+                                 self.get_entity_by_id))
 
     @Slot()
     def received_create_wall(self, player_name: str, x: int, y: int) -> None:

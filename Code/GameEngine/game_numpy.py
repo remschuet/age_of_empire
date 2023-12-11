@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Optional
 
-from Utils.a_star_8d import AStar
+from Utils.a_star_8d_size import AStar
 
 
 class GameNumpy:
@@ -97,10 +97,43 @@ class GameNumpy:
         end_point = self.get_points_from_position(end_position)
 
         path: list[tuple] = AStar(self.__array_map, start_point, end_point)
-        path_relative = [(x * self.__size_case + x_reste, y * self.__size_case + y_reste) for x, y in path]
+        path_relative = [(x * self.__size_case, y * self.__size_case) for x, y in path]
+
+        x, y = path[0]  # pour eviter de faire "marche arriere"
+        path_relative[0] = (x * self.__size_case + x_reste, y * self.__size_case + y_reste)
+        # path_relative = [(x * self.__size_case + x_reste, y * self.__size_case + y_reste) for x, y in path]
+
         path_relative.append(end_position)
 
         return path_relative
+
+    def print_values_inside_rectangle(self, start_point: tuple[int, int], end_point: tuple[int, int]) -> None:
+        """
+        Affiche les valeurs des points à l'intérieur du rectangle formé par deux points donnés.
+        :param start_point: Premier coin du rectangle (x, y)
+        :param end_point: Deuxième coin du rectangle (x, y)
+        """
+        x1, y1 = start_point
+        x2, y2 = end_point
+
+        # Assurez-vous que les points sont valides
+        if not (0 <= x1 < self.__size_map and 0 <= y1 < self.__size_map and
+                0 <= x2 < self.__size_map and 0 <= y2 < self.__size_map):
+            print("Coordonnées invalides.")
+            return
+
+        # Trouver les coordonnées du rectangle
+        x_start, x_end = min(x1, x2), max(x1, x2)
+        y_start, y_end = min(y1, y2), max(y1, y2)
+
+        # Afficher les valeurs des points à l'intérieur du rectangle
+        print("start : ", start_point)
+        print("end : ", end_point)
+        for y in range(y_start, y_end + 1):
+            for x in range(x_start, x_end + 1):
+                # print(f"Valeur du point ({x}, {y}): {self.__array_map[y][x]}")
+                print(int(self.__array_map[y][x]), " ", end="")
+            print()
 
     def get_path(self, start_point: tuple[int, int], end_point: tuple[int, int]) -> np.ndarray:
         """ Get shorts path (point) between 2 points in a 2d matrices
@@ -128,3 +161,5 @@ if __name__ == "__main__":
     print(pos)
     pos = game_np.get_path_relative((22, 44), (46, 88))
     print(pos)
+    print()
+    game_np.print_values_inside_rectangle((0, 0), (5, 5))

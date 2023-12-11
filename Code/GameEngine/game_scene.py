@@ -6,6 +6,7 @@ from Entity.town_center import TownCenter
 from GameEngine.gameplay import Gameplay
 from Gui.colored_square import ColoredSquare
 from Entity.human import Human
+from Entity.tower import Tower
 from Gui.const_image_name import *
 from Gui.image_human import ImageHuman
 from Gui.q_image_background import QImageBackground
@@ -44,15 +45,19 @@ class GameScene(QGraphicsScene):
                     new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_HUMAN_BLUE, i.id)
                 elif isinstance(i, TownCenter):
                     new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_BLUE, i.id)
+                elif isinstance(i, Tower):
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_BLUE, i.id)
                 else:
-                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWER_BLUE, i.id)
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_WALL_BLUE, i.id)
             else:
                 if isinstance(i, Human):
                     new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_HUMAN_RED, i.id)
                 elif isinstance(i, TownCenter):
                     new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_RED, i.id)
+                elif isinstance(i, Tower):
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_RED, i.id)
                 else:
-                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWER_RED, i.id)
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_WALL_RED, i.id)
 
             self.squares.append(new_square)
             self.addItem(new_square)

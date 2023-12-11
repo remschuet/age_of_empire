@@ -14,6 +14,7 @@ class LobbyApp(QWidget):
         # Créer le bouton "Jouer"
         self.play_button = QPushButton("Jouer")
         self.play_button.clicked.connect(self.on_play_button_clicked)
+        self.resize(600, 500)
 
         # Ajouter le bouton au layout
         self.layout.addWidget(self.play_button)
