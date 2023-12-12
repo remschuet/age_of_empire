@@ -8,7 +8,7 @@ from Entity.town_center import TownCenter
 from Entity.villager import Villager
 from Entity.wall import Wall
 from common.const_action import *
-from common.const_resource import *
+from common.const_resource_entity import *
 from GameEngine.game_numpy import GameNumpy
 
 
@@ -139,7 +139,6 @@ class Gameplay(QObject):
     def emit_action_create_entity(self, event):
         scene_pos = event.scenePos()
         self.__current_entity_id = 0
-        print(self.__current_action)
 
         if self.__current_action == ACTION_PLACE_HUMAN:
             if self.__resource[CONST_GOLD] >= Soldier.PRICE:

@@ -6,12 +6,13 @@ import os
 # https://opengameart.org/content/lpc-medieval-fantasy-character-sprites
 
 
-class ImageHuman(QObject, QGraphicsPixmapItem):
+class QImageEntity(QObject, QGraphicsPixmapItem):
     clicked = Signal(object)
 
-    def __init__(self, x, y, size_x, size_y, image_path, entity_id):
+    def __init__(self, x, y, size_x, size_y, image_path, entity_id, type_entity: int):
         super().__init__()
         QGraphicsPixmapItem.__init__(self)
+        self.type_entity = type_entity
 
         image_path = f"image/{image_path}"
 

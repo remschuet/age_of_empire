@@ -7,3 +7,6 @@ class TownCenter(Entity):
         self.hp = 10
         self.size_x: int = 120
         self.size_y: int = 80
+        self.__number_villager_to_create = 0
+
+    def ac

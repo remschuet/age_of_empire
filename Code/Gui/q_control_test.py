@@ -2,18 +2,15 @@ from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout
 
 from common.const_action import *
-from Gui.q_chat import QChat
 
 
-class QControls(QWidget):
+class QControlTest(QWidget):
     btn_clicked = Signal(int)
 
     def __init__(self) -> None:
         super().__init__()
 
-        # create label
-        label = QLabel("Hello, World!")
-        self.q_chat = QChat()
+        label = QLabel("Town Center!")
 
         btn_place_human = QPushButton("Human")
         btn_place_human.clicked.connect(self.emit_place_entity)
@@ -28,11 +25,11 @@ class QControls(QWidget):
         # Créer un layout vertical
         layout = QHBoxLayout()
         layout.addWidget(label)
+
         layout.addWidget(btn_place_human)
         layout.addWidget(btn_place_villager)
         layout.addWidget(btn_place_tower)
         layout.addWidget(btn_place_wall)
-        layout.addWidget(self.q_chat)
 
         # Définir le layout pour le widget principal
         self.setLayout(layout)

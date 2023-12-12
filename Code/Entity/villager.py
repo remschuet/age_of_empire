@@ -1,5 +1,5 @@
 from Entity.human import Human
-from common.const_resource import *
+from common.const_resource_entity import *
 
 
 class Villager(Human):
