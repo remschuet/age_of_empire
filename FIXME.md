@@ -8,5 +8,7 @@
 
 - Faire un mode hors ligne
 
+- Poser wall = recalculer deplacement de tout le monde
+
 click droit attack
 click gauche select

@@ -1,6 +1,7 @@
 from PySide6.QtCore import Signal, QObject, Slot, QTimer
 
 from Entity.entity import Entity
+from Entity.Soldier import Soldier
 from Entity.human import Human
 from Entity.tower import Tower
 from Entity.town_center import TownCenter
@@ -43,11 +44,11 @@ class Gameplay(QObject):
 
     # use by entity to get access to other entity
     def get_entity_by_id(self, id):
-        entity_obj: Human = next((rect for rect in self.entity if rect.id == id), None)
+        entity_obj: Soldier = next((rect for rect in self.entity if rect.id == id), None)
         return entity_obj
 
     def click_entity(self, id):
-        entity_obj: Human = next((rect for rect in self.entity if rect.id == id), None)
+        entity_obj: Soldier = next((rect for rect in self.entity if rect.id == id), None)
         if entity_obj.player_name == self.client_id:
             self.__current_entity_id = id
         else:
@@ -148,12 +149,12 @@ class Gameplay(QObject):
 
     @Slot()
     def received_human_attack(self, attack_human_id: int, victim_entity_id: int):
-        attack_human: Human = next((rect for rect in self.entity if rect.id == attack_human_id), None)
+        attack_human: Soldier = next((rect for rect in self.entity if rect.id == attack_human_id), None)
         attack_human.target = victim_entity_id
 
     @Slot()
     def received_create_entity(self, player_name: str, x: int, y: int) -> None:
-        self.entity.append(Human(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
+        self.entity.append(Soldier(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
 
     @Slot()
     def received_create_town_center(self, player_name: str, x: int, y: int) -> None:

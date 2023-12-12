@@ -5,6 +5,7 @@ from GameEngine.game_scene import GameScene
 from GameEngine.game_listener import GameListener
 from GameEngine.gameplay import Gameplay
 from Gui.q_controls import QControls
+from Gui.q_information import QInformation
 from Gui.q_lobby import LobbyApp
 from Serveur.client import Client
 from GameEngine.const_action import *
@@ -12,6 +13,7 @@ from GameEngine.const_action import *
 
 class Main:
     def __init__(self, app):
+        self.q_information = None
         self.game_scene: GameScene = None
         self.gameplay: Gameplay = None
         self.app: QApplication = app
@@ -48,6 +50,7 @@ class Main:
         self.gameplay = Gameplay(self.client_id)
         self.gameplay.action.connect(self.client.send_message)
         self.gameplay.emit_create_town_center(is_starter)
+        self.q_information = QInformation()
 
         self.game_scene = GameScene(self.gameplay, self.client_id)
         self.game_listener = GameListener(self.game_scene)
@@ -60,6 +63,7 @@ class Main:
 
         # Add graphical elements in Layout
         layout = QVBoxLayout()
+        layout.addWidget(self.q_information)
         layout.addWidget(self.game_listener)
         layout.addWidget(q_controls)
 

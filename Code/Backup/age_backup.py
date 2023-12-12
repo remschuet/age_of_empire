@@ -68,7 +68,7 @@ class GameScene(QGraphicsScene):
         self.setSceneRect(QRectF(-10000, -10000, 20000, 20000))
 
     def create_entity(self, x, y):
-        self.entity.append(Human(x + self.decalage_x, y + self.decalage_y))
+        self.entity.append(Soldier(x + self.decalage_x, y + self.decalage_y))
 
     def update_vue(self):
         for square in self.squares:

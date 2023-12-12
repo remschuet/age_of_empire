@@ -6,6 +6,8 @@ from Utils.math import is_collided
 
 
 class Human(Entity):
+    SIZE_X = 40
+    SIZE_Y = 40
 
     def __init__(self, player_name: str, x: int, y: int, get_entity_by_id) -> None:
         super().__init__(player_name, x, y, get_entity_by_id)
@@ -20,7 +22,6 @@ class Human(Entity):
         self.__direction_list: list[tuple] = []
 
         self.__speed: int = 10
-        self.__target: int = 0
         self.size_x = 40
         self.size_y = 40
 
@@ -28,8 +29,11 @@ class Human(Entity):
         self.tick += 1
         if not self.tick % 2:
             self.bouger()
-        if not self.tick % 2:
-            self.attack()
+        self.action()
+
+    # for children
+    def action(self):
+        pass
 
     def __get_next_direction(self):
         if self.__direction_list and self.__direction_list[0] is not None:
@@ -64,18 +68,6 @@ class Human(Entity):
                 self.pos_x = self.__direction[0]
                 self.pos_y = self.__direction[1]
 
-    def attack(self):
-        target_entity = self.get_entity_by_id(self.target)
-        if target_entity:
-            if (is_collided(self.pos_x, self.pos_y, self.size_x, self.size_y,
-                            target_entity.pos_x, target_entity.pos_y, target_entity.size_x, target_entity.size_y)):
-                print(f"-----Collision Detected:-----")
-                target_entity.hp -= 1
-            else:
-                self.direction = (target_entity.pos_x + (target_entity.size_x / 2), target_entity.pos_y + (target_entity.size_y / 2))
-        else:
-            self.target = 0
-
     @property
     def direction(self) -> tuple:
         return self.__direction
@@ -92,11 +84,3 @@ class Human(Entity):
     def direction_list(self, value: list) -> None:
         print(value)
         self.__direction_list = value
-
-    @property
-    def target(self) -> int:
-        return self.__target
-
-    @target.setter
-    def target(self, value: int):
-        self.__target = value
