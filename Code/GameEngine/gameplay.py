@@ -5,14 +5,16 @@ from Entity.Soldier import Soldier
 from Entity.human import Human
 from Entity.tower import Tower
 from Entity.town_center import TownCenter
+from Entity.villager import Villager
 from Entity.wall import Wall
-from GameEngine.const_action import *
+from common.const_action import *
+from common.const_resource import *
 from GameEngine.game_numpy import GameNumpy
-import numpy as np
 
 
 class Gameplay(QObject):
     action = Signal(str)
+    evt_resource = Signal(dict)
 
     def __init__(self, client_id):
         super().__init__()
@@ -25,6 +27,11 @@ class Gameplay(QObject):
         self.entity: list = []
         self.decalage_x: int = 0
         self.decalage_y: int = 0
+
+        self.__resource = {CONST_GOLD: 0,
+                           CONST_FOOD: 0,
+                           CONST_WOOD: 0,
+                           CONST_ROCK: 0}
 
         self.__current_entity_id: int = None
         self.__current_action = ACTION_NULL
@@ -43,9 +50,15 @@ class Gameplay(QObject):
         self.__current_entity_id = entity
 
     # use by entity to get access to other entity
-    def get_entity_by_id(self, id):
+    def get_entity_by_id(self, id: int):
         entity_obj: Soldier = next((rect for rect in self.entity if rect.id == id), None)
         return entity_obj
+
+    # use by villager to add some resource
+    def villager_action(self, player_entity, type_resource: str, qty: int) -> None:  # type_resource = common/const_resources
+        if player_entity == self.client_id:
+            self.__resource[type_resource] += qty
+            self.evt_resource.emit(self.__resource)
 
     def click_entity(self, id):
         entity_obj: Soldier = next((rect for rect in self.entity if rect.id == id), None)
@@ -88,7 +101,9 @@ class Gameplay(QObject):
         action = int(data[1])
         if action:
             if action == ACTION_PLACE_HUMAN:
-                self.received_create_entity(data[0], int(data[2]), int(data[3]))
+                self.received_create_soldier(data[0], int(data[2]), int(data[3]))
+            elif action == ACTION_PLACE_VILLAGER:
+                self.received_create_villager(data[0], int(data[2]), int(data[3]))
             elif action == ACTION_PLACE_TOWER:
                 self.received_create_tower(data[0], int(data[2]), int(data[3]))
             elif action == ACTION_MOVE_ENTITY:
@@ -124,6 +139,14 @@ class Gameplay(QObject):
     def emit_action_create_entity(self, event):
         scene_pos = event.scenePos()
         self.__current_entity_id = 0
+        print(self.__current_action)
+
+        if self.__current_action == ACTION_PLACE_HUMAN:
+            if self.__resource[CONST_GOLD] >= Soldier.PRICE:
+                 # FIX ME dans un get pour remettre la vue
+                self.__resource[CONST_GOLD] -= Soldier.PRICE
+            else:
+                return
         self.action.emit(f"{self.client_id};{self.__current_action};"
                          f"{int(scene_pos.x() - self.decalage_x)};"
                          f"{int(scene_pos.y() - self.decalage_y)}")
@@ -153,8 +176,12 @@ class Gameplay(QObject):
         attack_human.target = victim_entity_id
 
     @Slot()
-    def received_create_entity(self, player_name: str, x: int, y: int) -> None:
+    def received_create_soldier(self, player_name: str, x: int, y: int) -> None:
         self.entity.append(Soldier(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id))
+
+    @Slot()
+    def received_create_villager(self, player_name: str, x: int, y: int) -> None:
+        self.entity.append(Villager(player_name, x + self.decalage_x, y + self.decalage_y, self.get_entity_by_id, self.villager_action))
 
     @Slot()
     def received_create_town_center(self, player_name: str, x: int, y: int) -> None:

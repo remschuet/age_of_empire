@@ -82,5 +82,4 @@ class Human(Entity):
 
     @direction_list.setter
     def direction_list(self, value: list) -> None:
-        print(value)
         self.__direction_list = value

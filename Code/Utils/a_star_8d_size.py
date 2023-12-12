@@ -59,7 +59,7 @@ def AStar(grid, start_pos: tuple, goal_pos: tuple, obj_size: int = 2):
                     value_below = grid[neighbor_row + 1, neighbor_col]
                     # print("Dessous :", value_below)
 
-                if value_below == 1:
+                if value_below == 1 or value_right == 1:
                     continue
 
                 #########################################
@@ -80,6 +80,15 @@ def AStar(grid, start_pos: tuple, goal_pos: tuple, obj_size: int = 2):
 
 def heuristic(point1, point2):
     return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+
+def heuristic(a, b):
+    dx = abs(a[0] - b[0])
+    dy = abs(a[1] - b[1])
+
+    # Coût supplémentaire pour les déplacements diagonaux
+    diagonal_cost = 1.4  # Cela peut être ajusté en fonction de vos préférences
+
+    return (dx + dy) + (diagonal_cost - 2) * min(dx, dy)
 
 
 def neighbors(row, col, rows, cols):
@@ -104,9 +113,9 @@ def reconstruct_path(node_info, goal):
 if __name__ == "__main__":
     grille = np.array(
     [
-        [0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 1, 0],
-        [1, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0, 0],
         [1, 1, 0, 0, 0, 0, 0, 0],
         [1, 1, 1, 1, 0, 1, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0],
@@ -115,6 +124,6 @@ if __name__ == "__main__":
     )
 
     start = (0, 0)
-    goal = (7, 6)
+    goal = (7, 2)
     path = AStar(grille, start, goal)
     print("Chemin trouvé:", path)

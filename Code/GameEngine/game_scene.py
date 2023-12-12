@@ -3,6 +3,7 @@ from PySide6.QtGui import Qt, QColor
 from PySide6.QtWidgets import QGraphicsScene, QGraphicsSceneMouseEvent
 
 from Entity.town_center import TownCenter
+from Entity.villager import Villager
 from GameEngine.gameplay import Gameplay
 from Gui.colored_square import ColoredSquare
 from Entity.Soldier import Soldier
@@ -11,6 +12,7 @@ from Gui.const_image_name import *
 from Gui.image_human import ImageHuman
 from Gui.q_image_background import QImageBackground
 from Gui.q_information import QInformation
+from Gui.q_layout_town_center import QLayoutTownCenter
 
 
 class GameScene(QGraphicsScene):
@@ -45,8 +47,10 @@ class GameScene(QGraphicsScene):
             if i.player_name == self.client_id:
                 if isinstance(i, Soldier):
                     new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_HUMAN_BLUE, i.id)
+                elif isinstance(i, Villager):
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_VILLAGER_BLUE, i.id)
                 elif isinstance(i, TownCenter):
-                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_BLUE, i.id)
+                    new_square = QLayoutTownCenter(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_BLUE, i.id)
                 elif isinstance(i, Tower):
                     new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWER_BLUE, i.id)
                 else:
@@ -54,8 +58,10 @@ class GameScene(QGraphicsScene):
             else:
                 if isinstance(i, Soldier):
                     new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_HUMAN_RED, i.id)
+                elif isinstance(i, Villager):
+                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_VILLAGER_RED, i.id)
                 elif isinstance(i, TownCenter):
-                    new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_RED, i.id)
+                    new_square = QLayoutTownCenter(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWN_CENTER_RED, i.id)
                 elif isinstance(i, Tower):
                     new_square = ImageHuman(i.pos_x, i.pos_y, i.size_x, i.size_y, IMAGE_TOWER_RED, i.id)
                 else:
@@ -69,5 +75,7 @@ class GameScene(QGraphicsScene):
         # if instance entity
         if isinstance(item, ColoredSquare) or isinstance(item, ImageHuman):
             self.gameplay.click_entity(item.entity_id)
+        elif isinstance(item, QLayoutTownCenter):
+            print("yea")
         else:
             self.gameplay.click_screen(event)

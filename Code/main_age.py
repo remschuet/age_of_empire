@@ -8,7 +8,7 @@ from Gui.q_controls import QControls
 from Gui.q_information import QInformation
 from Gui.q_lobby import LobbyApp
 from Serveur.client import Client
-from GameEngine.const_action import *
+from common.const_action import *
 
 
 class Main:
@@ -51,9 +51,11 @@ class Main:
         self.gameplay.action.connect(self.client.send_message)
         self.gameplay.emit_create_town_center(is_starter)
         self.q_information = QInformation()
+        self.gameplay.evt_resource.connect(self.q_information.set_resource)
 
         self.game_scene = GameScene(self.gameplay, self.client_id)
         self.game_listener = GameListener(self.game_scene)
+
 
         q_controls = QControls()
         q_controls.q_chat.event_triggered.connect(self.client.send_message)

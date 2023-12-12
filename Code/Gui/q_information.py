@@ -1,44 +1,30 @@
-from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
-
+from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
 
 class QInformation(QWidget):
     def __init__(self) -> None:
         super().__init__()
 
+        # Dictionnaire pour stocker les données
+        self.data_dict = {
+            'gold': {'label': QLabel("Gold:"), 'value': QLabel("0")},
+            'food': {'label': QLabel("Food:"), 'value': QLabel("0")},
+            'rock': {'label': QLabel("Rock:"), 'value': QLabel("0")},
+            'wood': {'label': QLabel("Wood:"), 'value': QLabel("0")}
+        }
+
         layout = QHBoxLayout()
-        layout_gold = QHBoxLayout()
-        layout_food = QHBoxLayout()
-        layout_rock = QHBoxLayout()
 
-        info_gold = QLabel("Gold:")
-        self.data_gold = QLabel("0")
-        layout_gold.addWidget(info_gold)
-        layout_gold.addWidget(self.data_gold)
-        layout_gold.addStretch()
-        layout.addLayout(layout_gold)
-
-        info_food = QLabel("Food:")
-        self.data_food = QLabel("0")
-        layout_food.addWidget(info_food)
-        layout_food.addWidget(self.data_food)
-        layout_food.addStretch()
-        layout.addLayout(layout_food)
-
-        info_rock = QLabel("Rock:")
-        self.data_rock = QLabel("0")
-        layout_rock.addWidget(info_rock)
-        layout_rock.addWidget(self.data_rock)
-        layout_rock.addStretch()
-        layout.addLayout(layout_rock)
+        for resource, widgets in self.data_dict.items():
+            resource_layout = QHBoxLayout()
+            resource_layout.addWidget(widgets['label'])
+            resource_layout.addWidget(widgets['value'])
+            resource_layout.addStretch()
+            layout.addLayout(resource_layout)
 
         layout.addStretch()
         self.setLayout(layout)
 
-    def gold(self, value):
-        self.data_gold.setText(str(value))
-
-    def food(self, value):
-        self.data_food.setText(str(value))
-
-    def rock(self, value):
-        self.data_rock.setText(str(value))
+    def set_resource(self, resource_values: dict):
+        for resource in resource_values.keys():
+            if resource in self.data_dict:
+                self.data_dict[resource]['value'].setText(str(resource_values[resource]))
